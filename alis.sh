@@ -124,7 +124,7 @@ function check_variables() {
     check_variables_size "ADDITIONAL_USER_PASSWORDS" "${#ADDITIONAL_USER_NAMES_ARRAY[@]}" "${#ADDITIONAL_USER_PASSWORDS_ARRAY[@]}"
     check_variables_list "BOOTLOADER" "$BOOTLOADER" "grub refind systemd"
     check_variables_list "AUR" "$AUR" "aurman yay"
-    check_variables_list "DESKTOP_ENVIRONMENT" "$DESKTOP_ENVIRONMENT" "gnome kde xfce mate cinnamon lxde" "false"
+    check_variables_list "DESKTOP_ENVIRONMENT" "$DESKTOP_ENVIRONMENT" "budgie gnome kde xfce mate cinnamon lxde" "false"
     check_variables_list "DISPLAY_DRIVER" "$DISPLAY_DRIVER" "intel amdgpu ati nvidia nvidia-lts nvidia-390xx nvidia-390xx-lts nvidia-340xx nvidia-340xx-lts nouveau" "false"
     check_variables_boolean "KMS" "$KMS"
     check_variables_boolean "DISPLAY_DRIVER_DDX" "$DISPLAY_DRIVER_DDX"
@@ -926,6 +926,9 @@ function desktop_environment() {
     pacman_install "mesa $PACKAGES_DRIVER $PACKAGES_DDX $PACKAGES_VULKAN $PACKAGES_HARDWARE_ACCELERATION"
 
     case "$DESKTOP_ENVIRONMENT" in
+        "budgie" )
+            desktop_environment_budgie
+            ;;
         "gnome" )
             desktop_environment_gnome
             ;;
@@ -945,6 +948,11 @@ function desktop_environment() {
             desktop_environment_lxde
             ;;
     esac
+}
+
+function desktop_environment_budgie() {
+    pacman_install "budgie-desktop gnome lightdm lightdm-gtk-greeter"
+    arch-chroot /mnt systemctl enable lightdm.service
 }
 
 function desktop_environment_gnome() {
